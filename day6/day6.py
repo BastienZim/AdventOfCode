@@ -50,7 +50,13 @@ def alternative(fishDict):
 def main():
     input = get_input(False)
     print(input)
-    fishDict = {i: input.count(i) for i in range(0,9)}
+    fishDict = {i: 0 for i in range(0,9)}
+    for i in input:
+        fishDict[i] += 1
+    #equivalent to the three lines above, however it is more complex as it goes through the input samples several times.
+    #fishDict = {i: input.count(i) for i in range(0,9)}
+
+
     #print(fishDict)
     n_days = 256
     for day in range(1,n_days+1):
