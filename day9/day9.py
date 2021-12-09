@@ -12,21 +12,17 @@ import numpy as np
 def main():
     input = get_input(False)
     #print(input)
-    #part1
+#part1--------------------------------------------------------------------------------
     #check_grid(input)
-    
+#part2--------------------------------------------------------------------------------    
     low_pts = get_low_points(input)
-    #for pt in low_pts:
-    #    bassin_points = get_bassin(pt, input)
-        #print(pt, len(bassin_points), bassin_points)
-        #print(len(bassin_points))
+    
     all_bassins_size = [len(get_bassin(pt, input)) for pt in low_pts]
     #print(all_bassins_size)
     top_3_bassins = sorted(all_bassins_size)[-3:]
     print(top_3_bassins)
     print(reduce(lambda x,y: x*y, top_3_bassins))
-#    print(low_pts)
-    #print(input.shape)
+    
 
 #---------------------Funcs--------------------
 def check_grid(grid):
