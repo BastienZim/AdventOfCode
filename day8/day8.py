@@ -142,7 +142,6 @@ def deduce_others(sureList, signal_pattern):
     segs_left = [seg for seg in signal_pattern if seg not in [x[0] for x in sureList]]
 
     while(len(sureList)<10):
-        
         segs_left, sureList = deduce_recursive(segs_left, sureList)
     
     #print("\n success !!!!!!!!")
