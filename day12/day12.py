@@ -4,25 +4,28 @@ down = up
 
 
 '''
-from os import link, path
-from types import coroutine
 import numpy as np
+from time import time
+
 def main():
-    input = get_input(exBOOL = True)
+    input = get_input(exBOOL = False)
     
     #print(input)
     graph = create_graph(input)
     print(graph)
-    all_paths_1 = get_all_path(graph, "start", "end")
-    all_paths = get_all_path_opti(graph, "start", "end")
-    
-   
+    #t1 = time()
+    #all_paths_1 = get_all_path(graph, "start", "end")
+    #print("%.2f"%(time()-t1))
+    t1 = time()
+    #all_paths = get_all_path_opti(graph, "start", "end")
+    count_all_paths = get_all_path_opti(graph, "start", "end")
+    print("%.2f"%(time()-t1))
     #print("\n\n\n")
-    for x in all_paths:
-        print(x)
+    #for x in all_paths:
+    #    print(x)
 #    print(all_paths)
     #print(len(np.unique(all_paths)))
-    print(len(all_paths), len(all_paths_1))
+    print(count_all_paths)#, len(all_paths_1))
 
 #---------------------Class--------------------
 
@@ -60,24 +63,16 @@ def add_step(current_path, graph, small):
 
 def only_add_possible_steps(current_path, graph, small, small_node_count):
     
-    #all_possible = graph[current_path[-1]]
-    #candidates_nodes = potential_next(current_path, graph, small)
     potential_nodes = [x for x in graph[current_path[-1]]]
     small_pot = [x for x in potential_nodes if x in small]
     big_pot = [x for x in potential_nodes if x not in small_pot]
-    #small_node_count = {x: current_path.count(x) for x in small}
     
-    #print("current path:  ", current_path)
-    #print("counter:  ", small_node_count)
-
+    
     if(2 in small_node_count.values()):
-        candidates_nodes = big_pot + [x for x in small_node_count if small_node_count[x]<1] + [x for x in small_pot if x not in small_node_count]
-        #print("|||||||||||||||||||", candidates_nodes, small_node_count)
-        #print("|||||||||||||||||||",small_node_count,"\n", big_pot,[x for x in small_node_count if small_node_count[x]<1],small_pot)
+        candidates_nodes = big_pot + [x for x in small_node_count if small_node_count[x]<1 if x in small_pot] + [x for x in small_pot if x not in small_node_count]
     else:
-        candidates_nodes = big_pot + [x for x in small_node_count if small_node_count[x]<2] + [x for x in small_pot if x not in small_node_count]
-        #print("-----------------",  small_node_count,"\n", big_pot,[x for x in small_node_count if small_node_count[x]<2],small_pot)
- #   print("possible nodes------------------", candidates_nodes)
+        candidates_nodes = big_pot + [x for x in small_node_count if small_node_count[x]<2 if x in small_pot] + [x for x in small_pot if x not in small_node_count]
+        
     new_paths = []
     for x in candidates_nodes:
         if(x in small_node_count):
@@ -127,7 +122,7 @@ def is_valid_advanced(path):
     return(True)
 
 def get_all_path_opti(graph, start, end):
-    paths_complete = []
+    #paths_complete = []
     #all path, with small nodes count
     all_path = [[[start],{}]]
     
@@ -135,25 +130,32 @@ def get_all_path_opti(graph, start, end):
     big, small = separate_big_small_cave(graph)
     small.remove('start')
     small.remove('end')
+    count = 0
     i=0
 #    while(not all([is_complet_simplified(x[0]) for x in all_path])):
     while(len(all_path)>0):
         
         #all_path = [add_step(path,graph, small) for path in all_path]
+        
         all_path = [only_add_possible_steps(path, graph,small, small_node_count) for (path, small_node_count) in all_path]
         all_path_new = [sub_path for path in all_path for sub_path in path]
         
-        complete_new_paths = [path for (path, small_node_count) in all_path_new if is_complet_simplified(path)]
-        paths_complete = paths_complete + complete_new_paths
         
-        all_path = [(path, small_node_count) for (path, small_node_count) in all_path_new if path not in complete_new_paths]
+        complete_new_paths = [path for (path, small_node_count) in all_path_new if path[-1] == 'end']
+        #paths_complete = paths_complete + complete_new_paths
+        count += len(complete_new_paths)
+        
+        all_path = [(path, small_node_count) for (path, small_node_count) in all_path_new if path[-1] != 'end']
+        
+        
         #print(complete_new_paths)
         #print("---", [x[0] for x in all_path])
         i+=1
         if(i>20):
             break        
         #print("\n")
-    return(paths_complete)
+    print()
+    return(count)
 
 
 
