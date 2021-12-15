@@ -5,7 +5,7 @@ down = up
 
 '''
 def main():
-    input = get_input(exBOOL = False)
+    input = get_input(exBOOL = True)
     
     print(input)
 
