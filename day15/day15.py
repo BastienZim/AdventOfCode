@@ -143,7 +143,7 @@ def Dijkstra_queue(start, map):
         heapq.heappush(queue, (n, distances[n]))
     
     while (len(queue)>0):
-        current_node, distan = heapq.heappop(queue)
+        current_node, _ = heapq.heappop(queue)
         neighbours = get_neighbours(current_node, map, map_shape)
         
         for dist, n in zip([map[x] for x in neighbours], neighbours):
@@ -154,7 +154,7 @@ def Dijkstra_queue(start, map):
                 #problem no update priority in heapq.... only O(n)
                 #queue.decrease_priority((n, current_distance))
                 heapq.heappush(queue,(n, current_distance))
-                
+                    
     
     return(distances, parrents)
 
