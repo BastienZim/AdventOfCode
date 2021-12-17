@@ -1,7 +1,13 @@
 {
     "cSpell.words": [
+        "deque",
+        "dtype",
+        "Funcs",
+        "hstack",
         "isin",
         "neighbours",
-        "transi"
+        "transi",
+        "vectorize",
+        "vstack"
     ]
 }
