@@ -4,17 +4,20 @@ down = up
 
 
 '''
-import numpy as np
 
 
+all_versions = []
 def main():
     input = get_input(exBOOL=True)
-    print(input)
+    #print(input)
     bin_number = hexa_converter(input)#"{0:b}".format((int(input,16)))#
-    print(bin_number)
+    #print(bin_number)
+    #print(len(bin_number))
     #version, id = get_paquet_info(bin_number)
     #print("Version %d, Id:%d"%(version, id))
+
     a,b,c,d, e = parse_input(bin_number)
+    print(sum(all_versions))
     #print("OK NOW WE ENDED", c, e)
     print("\n\n")
     print(e)
@@ -60,7 +63,6 @@ def bin_to_letters(paquet):
     return()
 
 
-
 def parse_input(bin_number, message=None, paquet_list = None):
     if(len(bin_number)<6):#less than 6 bit makes it uncompatible with version id format.
         #print("   -----------it has ended", message)
@@ -71,7 +73,8 @@ def parse_input(bin_number, message=None, paquet_list = None):
         paquet_list = []
     version, id = get_paquet_info(bin_number)
     to_consider = bin_number[6:]
-    #print("Version %d, Id:%d"%(version, id), bin_number[:6])
+    all_versions.append(version)
+    print("Version %d, Id:%d"%(version, id), bin_number[:6])
     if(id == 4):
         decimal_num, next = parse_literals(to_consider)
         message += str(decimal_num)+","
@@ -101,7 +104,6 @@ def parse_input(bin_number, message=None, paquet_list = None):
 
 
 def parse_operator(to_consider, paquet_list, depth=0):
-    #print(to_consider)
     message = "O-"
     paquets_operator = list(paquet_list)
     if(to_consider[0] == '0'):#length
@@ -110,26 +112,25 @@ def parse_operator(to_consider, paquet_list, depth=0):
         sub_paquets = to_consider[n+1 : n+1 + n_bits_sub]
         while len(sub_paquets)>0:
             version, id , message, sub_paquets, paquet_list = parse_input(sub_paquets, message, paquet_list=paquets_operator)
+        
         next = to_consider[n+1 + n_bits_sub:]
         message = message[:-1]+"_"
-        #paquets_operator.append((version, id, "O", sub_paquets))
-        #print("HERE close", sub_paquets)
     elif(to_consider[0] == '1'):#number
         n=11
         n_sub_paquets = get_n_subs(to_consider[1:n+1])
         sub_paquets = to_consider[n+1:]
         n_sub_read = 0
+        len_subs_seen = 0
+        old_len = len(to_consider)
         while n_sub_read != n_sub_paquets:
             #print(n_sub_read, n_sub_paquets)
+            
             version, id , message, sub_paquets, paquet_list = parse_input(sub_paquets, message, paquet_list=paquets_operator)
+            len_subs_seen += old_len - len(sub_paquets)
+            old_len = len_subs_seen
             n_sub_read += 1
-        #paquets_operator.append((version, id, "O", sub_paquets))
         message = message[:-1]+"_"
         next = sub_paquets
-    
-    #print("AAAAAA", message , paquets_operator)
-    #print("end of parse operator", message, next)
-    #print("$$$", message, paquets_operator)
     return(message, next, paquets_operator)
 
 def parse_literals(to_consider):
