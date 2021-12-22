@@ -42,9 +42,9 @@ def draw_target(input):
     grid[xmin : xmax+1, min(abs(ymin), abs(ymax)) : max(abs(ymin), abs(ymax))+1] = "#"
     grid[0,0] = "S"
     
-    show_map(grid)
+    #show_map(grid)
     print("/\\//\/\\//\/\/\/\/\/\\//\/\/\/\/\/\\//\/\/\/\/\\")
-    grid = add_padding(grid)
+    grid = draw_shots(grid, shot_list=[(3,3), (5,5), (8,-1), (25, -10)])
     print("/\\//\/\\//\/\/\/\/\/\\//\/\/\/\/\/\\//\/\/\/\/\\")
     show_map(grid)
 
@@ -53,25 +53,39 @@ def add_padding(grid, shot_list=[(33,-5)]):
     xs = [x[0] for x in shot_list]
     ys = [x[1] for x in shot_list]
     xmin, xmax = min(xs), max(xs)
-    ymin, ymax = min(ys), max(ys) 
+    ymin, ymax = min(ys), max(ys)
+    z_offset = [0,0,0,0]
+
     if(xmin < 0):
         pading = np.array(["." for i in range((abs(xmin))*(grid.shape[1]))]).reshape((abs(xmin), grid.shape[1])) 
         grid = np.vstack((pading, grid))
+        z_offset[0] = abs(xmin)
     if(xmax > grid.shape[0]):
         pading = np.array(["." for i in range((abs(xmax)-grid.shape[0]+1)*(grid.shape[1]))]).reshape((abs(xmax)-grid.shape[0]+1, grid.shape[1])) 
         grid = np.vstack((grid, pading))
+        z_offset[0] = abs(xmax)-grid.shape[0]+1
     if(ymin < -grid.shape[1]):
         pading = np.array(["." for i in range((abs(ymin)-grid.shape[1])*(grid.shape[0]))]).reshape((grid.shape[0], abs(ymin)-grid.shape[1])) 
-        show_map(pading)
-        print(pading.shape, grid.shape)
         grid = np.hstack((grid, pading))
+        z_offset[0] = abs(ymin)-grid.shape[1]
     if(ymax > 0):
         pading = np.array(["." for i in range((abs(ymax))*(grid.shape[0]))]).reshape((grid.shape[0], abs(ymax))) 
         grid = np.hstack((pading, grid))
-    return(grid)
+        z_offset[0] = abs(ymax)
+    return(grid,  z_offset)
 
 def draw_shots(grid, shot_list=[(33,-5)]):
-    grid = add_padding(grid, shot_list)
+    grid, offset = add_padding(grid, shot_list)
+    shot_list = [(x,x) for x in range(1,4)]
+
+    print(shot_list)
+    print(offset)
+    for shot in shot_list:
+        pos_x = shot[0]# - offset[0] 
+        pos_y = -shot[1]# - offset[2]
+        print(pos_x, pos_y)
+        grid[pos_x, pos_y] = "#"
+    return(grid)
 
 def show_map(grid):
     for x in grid.T:
