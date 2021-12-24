@@ -20,11 +20,11 @@ def main():
 
 
 #---------------------Funcs--------------------
-def find_deep_nested_pairs(snail, verbose = True):
+def find_deep_nested_pairs(snail, verbose = False):
 
     depth = 0
     nested_deep = []#list containing 4 pairs or deeper pairs
-    
+    pairs_contained  = {}# to list which pairs are inside
     
     if(verbose): 
         print(f"Snail : {snail}")
@@ -34,9 +34,10 @@ def find_deep_nested_pairs(snail, verbose = True):
         if(verbose):
             print(f"  --  level: {depth} !")
             #print(snail)
-        new_indexes = find_higher_pairs(snail, pairs_indexes, verbose = True)
+        new_indexes, pairs_contained = find_higher_pairs(snail, pairs_indexes, pairs_contained, verbose = False)
         new_pairs = [snail[beg:end] for beg,end in pairs_indexes]
-        print(f"   new_pairs: {new_pairs} !")
+        if(verbose): print(f"   new_pairs: {new_pairs} !")
+
         if(depth>=3):
             pairs = [(snail[beg:end],beg,end) for beg,end in pairs_indexes]
             nested_deep.append((depth, pairs))
@@ -51,7 +52,7 @@ def find_deep_nested_pairs(snail, verbose = True):
         print(f"Pairs: {pairs}")
         print()
         print("==="*20)
-    return(nested_deep)
+    return(nested_deep, pairs_contained)
 
 
 def snailfish(nums_a, nums_b, verbose = True):
@@ -83,8 +84,20 @@ def snailfish(nums_a, nums_b, verbose = True):
 
 
 def explode(snail, verbose = False):
-    nested_pairs = find_deep_nested_pairs(snail)
+    nested_pairs, pairs_contained = find_deep_nested_pairs(snail)
+    #print("AAA"*99)
+    print()
+    
     print(f"Nested pairs: {nested_pairs}")
+    print(f"pairs_contained: {pairs_contained}")
+
+    pair, depth = count_nested(nested_pairs, pairs_contained)
+    if(depth>4):
+        print(f"PAIR: {pair} DEPTH: {depth}")
+    print(snail.index(pair), len(pair))
+    ind_start = snail.index(pair)
+    to_explode = pair
+    
     if(len(nested_pairs)==0):
         return(snail)
     to_explode = nested_pairs[0][1][0][0]
@@ -95,6 +108,8 @@ def explode(snail, verbose = False):
         print()
         print(f"To explode: {to_explode}")
     #this might become 1 more [ symbol
+    print()
+
     leftmost_nested_pair = to_explode[to_explode.index("[[[[")+3:]
     ind_start += 3
     count = 0
@@ -143,6 +158,7 @@ def number_to_left(snail):
     else:
         return(("0",0))
 
+
 def number_to_right(snail):
     #print(snail)
     extracted_nums = [str(s) for s in re.findall(r'\b\d+\b', snail)]
@@ -156,7 +172,7 @@ def number_to_right(snail):
         return(("0",0))
 
 
-def find_higher_pairs(snail, pairs_indexes, verbose = False):
+def find_higher_pairs(snail, pairs_indexes, pairs_contained, verbose = False):
     pairs = [(snail[beg:end],beg,end) for beg,end in pairs_indexes]
     elts =  [(s) for s in re.findall(r'\b\d+\b', snail)]
     elts_i =  [(s.start(),s.end()) for s in re.finditer(r'\b\d+\b', snail)]
@@ -167,17 +183,13 @@ def find_higher_pairs(snail, pairs_indexes, verbose = False):
     #print(f" ### ELTS {elts_w_i}")
     #print(f" ### Pairs {pairs}")
     
-    print("\n\n" + "----"*19)
     pair_elts = sorted(elts_w_i+pairs, key = lambda x: x[1])
-    for x in pair_elts:
-        is_pair(x[0])
-    print("\n\n" + "####"*19)
     
     if(verbose): print([x[0] for x in pair_elts])
     new_indexes = []
     i = 0
     if(len(pair_elts)==1):
-        return(pairs_indexes)
+        return(pairs_indexes, pairs_contained)
 
 
     while(i<len(pair_elts)-1):
@@ -189,6 +201,12 @@ def find_higher_pairs(snail, pairs_indexes, verbose = False):
         if(p_pair == ref):
             if(verbose): print("YES", p_1, p_2)
             new_indexes.append((b_1-1, e_2+1))
+            if(is_pair(p_1)): 
+                if p_pair not in pairs_contained.keys():
+                    pairs_contained[p_pair] = p_1
+            if(is_pair(p_2)): 
+                if p_pair not in pairs_contained.keys():
+                    pairs_contained[p_pair] = p_2
             i+=2
         else:
             if(verbose): print("NO", p_1, p_2, "_-_", p_pair, ref)
@@ -200,17 +218,33 @@ def find_higher_pairs(snail, pairs_indexes, verbose = False):
                 new_indexes.append((b_2,e_2))
             i+=1
     
-    return(new_indexes)
+    return(new_indexes, pairs_contained)
     #left = snail[:beg][::-1]
 
     #print(left, snail[:beg])
         #extend_left:
+
+
 def is_pair(p_pair):
     if(p_pair.count("[") == p_pair.count("]") and p_pair.count("[") > 0):
         return(True)
     else:
        return(False)
 
+
+def count_nested(nested_pairs, pairs_contained):
+    #print("\n\n\n")
+    pairs = [x for x in nested_pairs if x[0] == max([x[0] for x in nested_pairs])]
+    #print(pairs)
+    pair = pairs[0][1][0][0]
+    #print(pair)
+    depth = 0
+    while (pair in pairs_contained.keys()):
+    #    print(pair)
+        pair = pairs_contained[pair]
+        depth += 1
+    #print(pair, depth)
+    return(pair,depth)
 
 def find_number_pairs(snail, verbose = False):
     pairs_indexes = []
