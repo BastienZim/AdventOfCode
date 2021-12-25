@@ -14,23 +14,24 @@ def main():
     print(f"Content: {content}")
     print()
 
-    snailfish( [[[[1,1],[2,2]],[3,3]],[4,4]], [5,5], verbose = True)
-"""
+    #snailfish( [[[[1,1],[2,2]],[3,3]],[4,4]], [5,5], verbose = True)
+
     snail = snailfish(content[0], content[1])
     
-    #print(content[0], content[1])
-    print(snail)
+    print(content[0],"   ", content[1])
+    print(f"First Snail: {snail}")
     #print("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")
     if(len(content)>2):#print(init_snail)
         for x in content[2:]:
             #print(x)
-            print()
             new_snail = snailfish(snail, x)
+            print(f"\n Partial Snail: {new_snail}")
             #print(snail,"    ",x)
             snail = new_snail
 #            input("AAAAAAAAAAAAA")
         print(new_snail)
-"""#    for i,x in enumerate(content[:-1]):
+    print(f"\n\nFINAL SNAIL is: {new_snail}")
+#    for i,x in enumerate(content[:-1]):
 #        print(x, content[i+1])
     #print()
     #print( content[1])
@@ -95,17 +96,18 @@ def snailfish(nums_a, nums_b, verbose = False):
     #2 Find pairs nested inside 4 pairs and explode
     #3 Find num>10 and split
     #2-3 do that to the max => NOT OPTI
-    print()
-    print(f"Snail Before expl: {snail}")
-    snail = explode_MAX(snail, verbose=True)
-    print(f"Snail explosion 1: {snail}")
-    snail = split_MAX(snail)
-    print()
-    #print(f"Snail explosion 2: {snail}")
-    #snail = explode_MAX(snail)
-    #snail = split_MAX(snail)
-    #snail = explode_MAX(snail)
-    #snail = split_MAX(snail)
+    #print()
+    #print(f"Snail Before expl: {snail}")
+    evolving = True
+    old_snail = str(snail)
+    while(evolving == True):
+        snail = explode_MAX(snail, verbose=False)
+        snail = split_MAX(snail)
+        if(snail == old_snail):
+            evolving = False
+        else:
+            old_snail = str(snail)
+
 
     if(verbose): print(f"Final Reduced Snail : {snail}")
     
@@ -216,8 +218,12 @@ def number_to_left(snail, verbose=False):
     #print()
     if(len(extracted_nums)>0):
         number = extracted_nums[-1]
+        #print(snail, number)
+        #print("AAA"*33)
         
-        index = snail[::-1].index(number)
+        #print(f"OLD: {snail[::-1].index(number)} - NEW: {len(snail) - snail.rfind(number) - 1}")
+        #index = snail[::-1].index(number)
+        index = len(snail) - snail.rfind(number) - 1
         return((number, index))
     else:
         return(("0",0))
@@ -352,7 +358,12 @@ def find_number_pairs(snail, verbose = False):
                 #start again at : i_open + to_check[i_open:].index("[")
                 if(verbose): print("intruder")
                 i_past_num1 = m_num1.start() + m_num1.end()
-                new_i_start =  i_past_num1 + to_check[i_past_num1:].index("[")
+               # print("AAA"*33)
+                #print(to_check[i_past_num1:])
+                if("[" in to_check[i_past_num1:]):
+                    new_i_start =  i_past_num1 + to_check[i_past_num1:].index("[")
+                else:
+                    new_i_start = len(to_check)
                 #print(f"new i start: {new_i_start}")
                 to_check = to_check[new_i_start:]
                 n_seen += new_i_start
