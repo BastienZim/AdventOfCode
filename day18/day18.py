@@ -69,29 +69,46 @@ def snailfish(nums_a, nums_b, verbose = True):
         print(f"Snail : {snail}")
 
     #2 Find pairs nested inside 4 pairs and explode
+    #3 Find num>10 and split
+    #2-3 do that to the max => NOT OPTI
+
+    snail = explode_MAX(snail)
+    snail = split_MAX(snail)
+    snail = explode_MAX(snail)
+    snail = split_MAX(snail)
+    snail = explode_MAX(snail)
+    snail = split_MAX(snail)
+
+    if(verbose): print(f"Final Reduced Snail : {snail}")
+    
+    return(snail)
+    
+def split_MAX(snail, verbose = False):
+    spl_snail = ""
+    while(True):
+        spl_snail = is_10_or_greater(snail)
+        if(verbose): print(f"  Splitted Snail is :       {spl_snail}")
+        if(spl_snail == snail):
+            break
+        else:
+            #print(f"Reduced exploded Snail is : {snail}")
+            snail = spl_snail
+
+    if(verbose): print(f"Totally Splitted Snail is : {spl_snail}")
+    return(spl_snail)
+
+
+def explode_MAX(snail, verbose = False):
     red_snail = ""
     while(True):
         red_snail = explode(snail, verbose = False)
-        print(f"  Exploded Snail is :       {red_snail}")
+        if(verbose): print(f"  Exploded Snail is :       {red_snail}")
         if(red_snail == snail):
             break
         else:
-            #print(f"Reduced exploded Snail is : {red_snail}")
             snail = red_snail
-    
-    print(f"\nTotally exploded Snail is : {red_snail}")
-    #3 Find nums >= 10 and split !
-    spl_snail = ""
-    while(True):
-        spl_snail = is_10_or_greater(red_snail)
-        print(f"  Splitted Snail is :         {spl_snail}")
-        if(red_snail == snail):
-            break
-        else:
-            #print(f"Reduced exploded Snail is : {red_snail}")
-            snail = red_snail
-
-    print(f"Totally Splitted Snail is : {spl_snail}")
+    if(verbose): print(f"Totally exploded Snail is : {red_snail}")
+    return(red_snail)
 
 def explode(snail, verbose = False):
     nested_pairs, pairs_contained = find_deep_nested_pairs(snail)
@@ -254,11 +271,11 @@ def is_pair(p_pair):
 
 
 def count_nested(nested_pairs, pairs_contained):
-    print("BBB"*29)
+    #print("BBB"*29)
     pairs = [x for x in nested_pairs if x[0] == max([x[0] for x in nested_pairs])]
-    print(f"Pairs: {pairs}")
+    #print(f"Pairs: {pairs}")
     current_pairs = [str(pairs[0][1][0][0])]
-    print(f"Pair: {current_pairs}")
+    #print(f"Pair: {current_pairs}")
     
     depth = 0
     has_changed = True
