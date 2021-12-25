@@ -16,7 +16,9 @@ def main():
     #print()
     #print( content[1])
     #snailfish(content[0], content[1])
-    snailfish([1,2], [[3,4],5])
+    #snailfish([1,2], [[3,4],5])
+    
+    snailfish([[[[4,3],4],4],[7,[[8,4],9]]], [1,1])
 
 
 
@@ -62,8 +64,7 @@ def snailfish(nums_a, nums_b, verbose = True):
     added_nums = [nums_a + nums_b]
     snail = compact_str(added_nums)
     #snail = "[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]"
-    snail = "[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]"
-    
+    #snail = "[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]"
     if(verbose): 
         print(f"Input : {nums_a} - { nums_b}")
         print(f"Snail : {snail}")
@@ -71,7 +72,6 @@ def snailfish(nums_a, nums_b, verbose = True):
     #2 Find pairs nested inside 4 pairs and explode
     #3 Find num>10 and split
     #2-3 do that to the max => NOT OPTI
-
     snail = explode_MAX(snail)
     snail = split_MAX(snail)
     snail = explode_MAX(snail)
