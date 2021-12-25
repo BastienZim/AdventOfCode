@@ -13,11 +13,30 @@ def main():
     
     print(f"Content: {content}")
     print()
+
+    snailfish( [[[[1,1],[2,2]],[3,3]],[4,4]], [5,5], verbose = True)
+"""
+    snail = snailfish(content[0], content[1])
+    
+    #print(content[0], content[1])
+    print(snail)
+    #print("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")
+    if(len(content)>2):#print(init_snail)
+        for x in content[2:]:
+            #print(x)
+            print()
+            new_snail = snailfish(snail, x)
+            #print(snail,"    ",x)
+            snail = new_snail
+#            input("AAAAAAAAAAAAA")
+        print(new_snail)
+"""#    for i,x in enumerate(content[:-1]):
+#        print(x, content[i+1])
     #print()
     #print( content[1])
     #snailfish(content[0], content[1])
-    snailfish([1,2], [[3,4],5])
-    
+    #snailfish([1,2], [[3,4],5])
+    #
     #snailfish([[[[4,3],4],4],[7,[[8,4],9]]], [1,1])
 
 
@@ -58,7 +77,7 @@ def find_deep_nested_pairs(snail, verbose = False):
     return(nested_deep, pairs_contained)
 
 
-def snailfish(nums_a, nums_b, verbose = True):
+def snailfish(nums_a, nums_b, verbose = False):
 
     #1: Concat numbers
     added_nums = "["+str(nums_a) +","+ str(nums_b)+"]"
@@ -76,16 +95,21 @@ def snailfish(nums_a, nums_b, verbose = True):
     #2 Find pairs nested inside 4 pairs and explode
     #3 Find num>10 and split
     #2-3 do that to the max => NOT OPTI
-    snail = explode_MAX(snail)
+    print()
+    print(f"Snail Before expl: {snail}")
+    snail = explode_MAX(snail, verbose=True)
+    print(f"Snail explosion 1: {snail}")
     snail = split_MAX(snail)
-    snail = explode_MAX(snail)
-    snail = split_MAX(snail)
-    snail = explode_MAX(snail)
-    snail = split_MAX(snail)
+    print()
+    #print(f"Snail explosion 2: {snail}")
+    #snail = explode_MAX(snail)
+    #snail = split_MAX(snail)
+    #snail = explode_MAX(snail)
+    #snail = split_MAX(snail)
 
     if(verbose): print(f"Final Reduced Snail : {snail}")
     
-    return(snail)
+    return(compact_str(snail))
     
 def split_MAX(snail, verbose = False):
     spl_snail = ""
@@ -140,12 +164,13 @@ def explode(snail, verbose = False):
     ind_end = ind_start + len(to_explode)
     
 
-    num_left, i_left = number_to_left(snail[:ind_start])
+    num_left, i_left = number_to_left(snail[:ind_start], verbose = False)
     if(i_left > 0): 
         num_left = str(int(num_left)+will_explode[0])
         old_left_num = int(num_left) - eval(pair)[0]
         #truncated = truncated[0] + str(num_left) + truncated[1+len(str(old_left_num)):]
-    else: old_left_num = ""
+    else: 
+        old_left_num = ""
     num_right, i_right = number_to_right(snail[ind_end:])
     if(i_right > 0): 
         num_right = str(int(num_right)+will_explode[1])
@@ -183,12 +208,13 @@ def explode(snail, verbose = False):
 
 
 
-def number_to_left(snail):
+def number_to_left(snail, verbose=False):
     #print(snail)
     #print(snail.split())
     extracted_nums = [s for s in re.findall(r'\b\d+\b', snail)]
-    #print(extracted_nums)
-    if(len(extracted_nums)>1):
+    if(verbose): print(f"  EXtracted_nums: {extracted_nums}")
+    #print()
+    if(len(extracted_nums)>0):
         number = extracted_nums[-1]
         
         index = snail[::-1].index(number)
