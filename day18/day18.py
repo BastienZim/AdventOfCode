@@ -16,9 +16,9 @@ def main():
     #print()
     #print( content[1])
     #snailfish(content[0], content[1])
-    #snailfish([1,2], [[3,4],5])
+    snailfish([1,2], [[3,4],5])
     
-    snailfish([[[[4,3],4],4],[7,[[8,4],9]]], [1,1])
+    #snailfish([[[[4,3],4],4],[7,[[8,4],9]]], [1,1])
 
 
 
@@ -61,12 +61,16 @@ def find_deep_nested_pairs(snail, verbose = False):
 def snailfish(nums_a, nums_b, verbose = True):
 
     #1: Concat numbers
-    added_nums = [nums_a + nums_b]
+    added_nums = "["+str(nums_a) +","+ str(nums_b)+"]"
     snail = compact_str(added_nums)
+
     #snail = "[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]"
     #snail = "[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]"
+    
+
     if(verbose): 
         print(f"Input : {nums_a} - { nums_b}")
+        print(f"Added nums : {added_nums}")
         print(f"Snail : {snail}")
 
     #2 Find pairs nested inside 4 pairs and explode
@@ -272,6 +276,9 @@ def is_pair(p_pair):
 
 def count_nested(nested_pairs, pairs_contained):
     #print("BBB"*29)
+    #print(nested_pairs)
+    if(len(nested_pairs)==0):
+        return([],0)
     pairs = [x for x in nested_pairs if x[0] == max([x[0] for x in nested_pairs])]
     #print(f"Pairs: {pairs}")
     current_pairs = [str(pairs[0][1][0][0])]
