@@ -144,6 +144,9 @@ def explode(snail, verbose = False):
     if(",]" in truncated): truncated = truncated.replace(",]",",0]")
 
 
+    
+ 
+    new_snail = snail[ : ind_start - i_left - 1] + truncated + snail[ind_end + i_right+1 : ]
     if(verbose):
         print(f"Snail: {snail}")
         print(f"True left number: {old_left_num} - New left : {num_left}")
@@ -152,10 +155,8 @@ def explode(snail, verbose = False):
         print(f"Truncated: {truncated}")
         print(f"NEW Truncated: {truncated}")
         print(f"NEW FILLED Truncated: {truncated}")
- 
-    new_snail = snail[ : ind_start - i_left - 1] + truncated + snail[ind_end + i_right+1 : ]
-
-    print(f"NEW Snail : {new_snail}")
+        print(f"NEW Snail : {new_snail}")
+    
     
     return(new_snail)
 
