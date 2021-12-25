@@ -95,13 +95,9 @@ def snailfish(nums_a, nums_b, verbose = True):
 
 def explode(snail, verbose = False):
     nested_pairs, pairs_contained = find_deep_nested_pairs(snail)
-    print("AAAAAAAAAAA"*10)
-    #print("AAA"*99)
-    
     #print()
-    print(f"Nested pairs: {nested_pairs}")
-    print(f"pairs_contained: {pairs_contained}")
-    print()
+    #print(f"Nested pairs: {nested_pairs}")
+    #print(f"pairs_contained: {pairs_contained}")
     
     pair, depth = count_nested(nested_pairs, pairs_contained)
     if(depth>=4):
@@ -110,7 +106,6 @@ def explode(snail, verbose = False):
         return(snail)
     #print(snail.index(pair), len(pair))
 
-    print(f"PAIR: {pair} DEPTH: {depth}")
     ind_start = snail.index(pair)
     to_explode = pair
     
@@ -119,30 +114,49 @@ def explode(snail, verbose = False):
         print()
         print(f"To explode: {to_explode}")
     
-    #this might become 1 more [ symbol
-    print()
-
+    
     will_explode = eval(to_explode)
     ind_end = ind_start + len(to_explode)
     
+
     num_left, i_left = number_to_left(snail[:ind_start])
-    if(i_left > 0): num_left = str(int(num_left)+will_explode[0])
+    if(i_left > 0): 
+        num_left = str(int(num_left)+will_explode[0])
+        old_left_num = int(num_left) - eval(pair)[0]
+        #truncated = truncated[0] + str(num_left) + truncated[1+len(str(old_left_num)):]
+    else: old_left_num = ""
     num_right, i_right = number_to_right(snail[ind_end:])
-    if(i_right > 0): num_right = str(int(num_right)+will_explode[1])
-    patch = snail[ind_start-i_left : ind_end+i_right]
-    patch = num_left + snail[ind_start - i_left -len(num_left)+1 : ind_start]+\
-            snail[ind_end : ind_end + i_right -1] + num_right
+    if(i_right > 0): 
+        num_right = str(int(num_right)+will_explode[1])
+        old_right_num = int(num_right) - eval(pair)[1]
+        #truncated = truncated[:-len(str(old_right_num))] + str(num_right) 
+    else:
+        old_right_num = ""
+
     
-    new_snail = snail[:ind_start-i_left] + patch + snail[ind_end+i_right:]
-    
+    #remove pair
+    truncated = snail[ind_start-i_left-1 : ind_start] + snail[ind_end : ind_end+i_right+1]
+    if(i_left>0):
+        truncated = str(num_left) + truncated[len(str(old_left_num)):] 
+    if(i_right>0):
+        truncated = truncated[:-len(str(old_right_num))-1] + str(num_right) + truncated[-1]
+    if("[," in truncated): truncated = truncated.replace("[,","[0,")
+    if(",]" in truncated): truncated = truncated.replace(",]",",0]")
+
+
     if(verbose):
-        print("now----left")
-        print(f"num: {num_left}, index: {i_left}")
-        print("now----right")
-        print(f"num: {num_right}, index: {i_right}")
-        print(f"Patch    : {patch}")
-        print(f"Snail    : {snail}")
-        print(f"NEW Snail: {new_snail}")
+        print(f"Snail: {snail}")
+        print(f"True left number: {old_left_num} - New left : {num_left}")
+        print(f"True right number: {old_right_num} - New Right : {num_right}")
+        print()
+        print(f"Truncated: {truncated}")
+        print(f"NEW Truncated: {truncated}")
+        print(f"NEW FILLED Truncated: {truncated}")
+ 
+    new_snail = snail[ : ind_start - i_left - 1] + truncated + snail[ind_end + i_right+1 : ]
+
+    print(f"NEW Snail : {new_snail}")
+    
     return(new_snail)
 
 
@@ -249,14 +263,14 @@ def count_nested(nested_pairs, pairs_contained):
     has_changed = True
     while (has_changed):
         
-        print(f"    Inside {current_pairs}")
+        #print(f"    Inside {current_pairs}")
         sub_pairs = []
         for pair in current_pairs:
             if pair in pairs_contained.keys():
                 sub_pairs = sub_pairs + pairs_contained[pair]
 
-        print(f"    Contains {sub_pairs}")
-        print(f"    Depth {depth}")
+        #print(f"    Contains {sub_pairs}")
+        #print(f"    Depth {depth}")
         
         if(current_pairs == sub_pairs):
             break
@@ -279,7 +293,6 @@ def find_number_pairs(snail, verbose = False):
             i_open = m_num1.start()
             left_pair = to_check[i_open : m_num1.end()+1]
             if(verbose): print(f"Num1 found : {left_pair}")
-        depth += 1
             i_close = i_open + to_check[i_open:].index("]")+1
             potential_pair = to_check[i_open : i_close]
             if(verbose): print(f"Potential pair : {potential_pair}")
