@@ -15,26 +15,26 @@ def main():
     print()
 
     #snailfish( [[[[1,1],[2,2]],[3,3]],[4,4]], [5,5], verbose = True)
-
-    #snail = snailfish(content[0], content[1])
     
-    print(content[0],"   ", content[1])
+    snail = snailfish(content[0], content[1], verbose = True)
+    
+    #print(content[0],"   ", content[1])
 
-
+    
     print("\n\n               TEEEEEEEEEEEESSTT")
 
     added_nums = "["+str(content[0]) +","+ str(content[1])+"]"
     snail = compact_str(added_nums)
+    snail = compact_str("[[[[4,0],[5,4]],[[7,7],[0,[6,7]]]],[[5,[5,5]],[[0,[[5,5],[5,5]]],[0,6]]]]")
     #print(added_nums)
-    print(snail)
+    print(f"Snail Initial:              {snail}")
     test_explosion(snail)
 
 
     print("              ENNNNNDDDDD   ____    TEEEEEEEEEEEESSTT\n")
     
-
-
-    #print(f"First Snail:   {snail}")
+    snail = ""
+    print(f"First Snail:   {snail}")
     #print("Supposed to be","[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]")
     #print("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")
     if(len(content)>2):#print(init_snail)
@@ -59,11 +59,11 @@ def main():
 
 #---------------------Funcs--------------------
 def test_explosion(snail):
-
-    snail = explode_MAX(snail, verbose=True)
-    snail = split_MAX(snail, verbose=True)
-    print(" - Round 2")
-    snail = explode_MAX(snail, verbose=True)
+    snail = explode(snail, verbose=True)
+    #snail = explode_MAX(snail, verbose=True)
+    #snail = split_MAX(snail, verbose=True)
+    #print(" - Round 2")
+    #snail = explode_MAX(snail, verbose=True)
     #    if(snail == old_snail):
     ##        evolving = False
     #    else:
@@ -72,7 +72,7 @@ def test_explosion(snail):
     return()
 
 def snailfish(nums_a, nums_b, verbose = False):
-
+    nums_a, nums_b = compact_str(nums_a), compact_str(nums_b)
     #1: Concat numbers
     added_nums = "["+str(nums_a) +","+ str(nums_b)+"]"
     snail = compact_str(added_nums)
@@ -83,7 +83,7 @@ def snailfish(nums_a, nums_b, verbose = False):
 
     if(verbose): 
         print(f"Input : {nums_a} - { nums_b}")
-        print(f"Added nums : {added_nums}")
+        #print(f"Added nums : {added_nums}")
         print(f"Snail : {snail}")
 
     #2 Find pairs nested inside 4 pairs and explode
@@ -94,8 +94,11 @@ def snailfish(nums_a, nums_b, verbose = False):
     evolving = True
     old_snail = str(snail)
     while(evolving == True):
-        snail = explode_MAX(snail, verbose=False)
+        if(verbose): print("   Begin reducing")
+        snail = explode_MAX(snail, verbose=True)
+        if(verbose): print(f"            Explosions \n{snail}")
         snail = split_MAX(snail)
+        if(verbose): print(f"            Splitting \n{snail}")
         if(snail == old_snail):
             evolving = False
         else:
@@ -180,14 +183,17 @@ def split_MAX(snail, verbose = False):
 
 
 def explode_MAX(snail, verbose = False):
+    count_expl = 0
     red_snail = ""
     while(True):
         red_snail = explode(snail, verbose = False)
-        if(verbose): print(f"  Exploded Snail is :       {red_snail}")
         if(red_snail == snail):
             break
         else:
+            if(verbose): print(f"  Exploded Snail is :       {red_snail}")
             snail = red_snail
+            count_expl += 1
+    #if(verbose): print(f"{count_expl} Explosions. Totally exploded Snail is : {red_snail}")
     if(verbose): print(f"Totally exploded Snail is : {red_snail}")
     return(red_snail)
 
@@ -575,6 +581,43 @@ def is_10_or_greater(snail, verbose=False):
         print(f"Snail    : {snail}")
         print(f"NEW Snail: {new_snail}")
     return(new_snail)
+
+
+def show_count_brackets(stringIN, level = 4 ,verbose = False):
+    count, res = 0, ""
+    has_found=False
+    for i, x in enumerate(stringIN):
+        if x=="[": 
+            count += 1
+            res+=str(count)+" "
+            if(not has_found and count==level+1): 
+                res = res[:-1]+"A"
+                has_found = True
+        elif x=="]": 
+            if(has_found and count == level):
+                res = res[:-1]+"B"
+                has_found = False
+#                return([beg, i, stringIN[beg:i+1]])
+            count -= 1
+            res+=str(count)+" "
+        else: res+="  "
+    if(verbose):
+        print(" ".join(stringIN))
+        print(res)
+
+def get_exploding_pair(stringIN, level = 4 ,verbose = False):
+    count = 0
+    has_found=False
+    for i, x in enumerate(stringIN):
+        if x=="[": 
+            count += 1
+            if(not has_found and count==level+1): 
+                beg = i
+                has_found = True
+        elif x=="]": 
+            if(has_found and count == level): return([beg, i, stringIN[beg:i]])
+            count -= 1
+    return(None)
 
 #-------------INPUT--------------------------
 def get_input(exBOOL = False):
