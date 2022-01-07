@@ -19,8 +19,8 @@ def main():
     snail = snailfish(content[0], content[1], verbose = True)
     
     #print(content[0],"   ", content[1])
-
     
+    '''
     print("\n\n               TEEEEEEEEEEEESSTT")
 
     added_nums = "["+str(content[0]) +","+ str(content[1])+"]"
@@ -32,7 +32,7 @@ def main():
 
 
     print("              ENNNNNDDDDD   ____    TEEEEEEEEEEEESSTT\n")
-    
+    '''
     snail = ""
     print(f"First Snail:   {snail}")
     #print("Supposed to be","[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]")
@@ -85,17 +85,19 @@ def snailfish(nums_a, nums_b, verbose = False):
         print(f"Input : {nums_a} - { nums_b}")
         #print(f"Added nums : {added_nums}")
         print(f"Snail : {snail}")
+    
 
     #2 Find pairs nested inside 4 pairs and explode
     #3 Find num>10 and split
     #2-3 do that to the max => NOT OPTI
     #print()
-    #print(f"Snail Before expl: {snail}")
+    print(f"Snail Before expl: {snail}")
+    snail = "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]"
     evolving = True
     old_snail = str(snail)
     while(evolving == True):
         if(verbose): print("   Begin reducing")
-        snail = explode_MAX(snail, verbose=True)
+        snail = explode_MAX(snail, verbose=False)
         if(verbose): print(f"            Explosions \n{snail}")
         snail = split_MAX(snail)
         if(verbose): print(f"            Splitting \n{snail}")
@@ -186,7 +188,7 @@ def explode_MAX(snail, verbose = False):
     count_expl = 0
     red_snail = ""
     while(True):
-        red_snail = explode(snail, verbose = False)
+        red_snail = explode(snail, verbose = True)
         if(red_snail == snail):
             break
         else:
@@ -199,71 +201,73 @@ def explode_MAX(snail, verbose = False):
 
 def explode(snail, verbose = False):
     
-    nested_pairs, pairs_contained = find_deep_nested_pairs(snail, verbose=False)
-    #print()
-    #print(f"Nested pairs: {nested_pairs}")
-    #print(f"pairs_contained: {pairs_contained}")
-    
-    pair, depth = count_nested(nested_pairs, pairs_contained)
-    #print(snail)
-    #print(f" Pairs: {pair},- Depth: {depth}")
-    if(depth>=4):
-        if(verbose): print(f"PAIR: {pair} DEPTH: {depth}")
+    exploding_pair = get_exploding_pair(snail, level = 4)
+    if(exploding_pair):
+        ind_start, ind_end, to_explode = exploding_pair
+        if(verbose):
+            print(f"     FOUND: -> {exploding_pair}")
+            print(f"     To explode: {to_explode}")
     else:
         return(snail)
-    #print(snail.index(pair), len(pair))
 
-    ind_start = snail.index(pair)
-    to_explode = pair
-    
-    if(verbose):
-        print(f"Nested pairs: {nested_pairs}")
-        print()
-        print(f"To explode: {to_explode}")
-    
-    
     will_explode = eval(to_explode)
-    ind_end = ind_start + len(to_explode)
     
-
+    #ind_end+=1
     num_left, i_left = number_to_left(snail[:ind_start], verbose = False)
+    print(f"SNAILLL: {snail}")
+    print(f"LEFTTTT : {num_left}, {i_left}")
     if(i_left > 0): 
         num_left = str(int(num_left)+will_explode[0])
-        old_left_num = int(num_left) - eval(pair)[0]
-        #truncated = truncated[0] + str(num_left) + truncated[1+len(str(old_left_num)):]
+        old_left_num = int(num_left) - will_explode[0]
     else: 
         old_left_num = ""
     num_right, i_right = number_to_right(snail[ind_end:])
     if(i_right > 0): 
         num_right = str(int(num_right)+will_explode[1])
-        old_right_num = int(num_right) - eval(pair)[1]
-        #truncated = truncated[:-len(str(old_right_num))] + str(num_right) 
+        old_right_num = int(num_right) - will_explode[1]
     else:
         old_right_num = ""
+        
 
-    
-    #remove pair
-    truncated = snail[ind_start-i_left-1 : ind_start] + snail[ind_end : ind_end+i_right+1]
-    if(i_left>0):
-        truncated = str(num_left) + truncated[len(str(old_left_num)):] 
-    if(i_right>0):
-        truncated = truncated[:-len(str(old_right_num))-1] + str(num_right) + truncated[-1]
-    if("[," in truncated): truncated = truncated.replace("[,","[0,")
-    if(",]" in truncated): truncated = truncated.replace(",]",",0]")
+    if(len(str(old_left_num))>0):
+        bef = snail[:ind_start-i_left-len(str(old_left_num))]
+        aft = snail[ind_start-i_left:ind_start]
+        left_part = bef + num_left + aft
+        if(verbose):
+            print(f"     L bef {bef}")
+            print(f"     L num_left {num_left}")
+            print(f"     L aft {aft}")
+            print(f"     There is a left num:  {num_left} -> {left_part} ")
+    else:
+        left_part = snail[:ind_start]+"0"
+        if(verbose):    print(f"     There NO left num:  -> {left_part} ")
+    if(len(str(old_right_num))>0):
+        bef = snail[ind_end + 1 + 1: ind_end + i_right - len(str(old_right_num))]
+        aft = snail[ind_end+i_right :]
+        right_part = bef + num_right + aft
+        if(verbose):
+            print(f"     R bef {bef}")
+            print(f"     R num_left {num_right}")
+            print(f"     R aft {aft}")
+            print(f"     There is a right num:  {num_right} -> {right_part} ")
+    else:
+        right_part = "0"+snail[ind_end+1 :]
+        if(verbose):    print(f"     There NO right num:  -> {right_part} ")
 
-
-    
- 
-    new_snail = snail[ : ind_start - i_left - 1] + truncated + snail[ind_end + i_right+1 : ]
+    #print(f"    right_part:  {right_part}" )
+    #print(f"    left_part :  {left_part}" )
+    before_padding = left_part + "," + right_part
+    #print(f"     NEW Snail : {new_snail}")
+    before_padding = before_padding.replace("[,","[0,") 
+    new_snail = before_padding.replace(",]",",0]") 
+    #print(f"     NEW Snail : {new_snail}")
     if(verbose):
-        print(f"Snail: {snail}")
-        print(f"True left number: {old_left_num} - New left : {num_left}")
-        print(f"True right number: {old_right_num} - New Right : {num_right}")
-        print()
-        print(f"Truncated: {truncated}")
-        print(f"NEW Truncated: {truncated}")
-        print(f"NEW FILLED Truncated: {truncated}")
-        print(f"NEW Snail : {new_snail}")
+        print(f"     Snail: {snail}")
+        print(f"     True left number: {old_left_num} - New left : {num_left}")
+        print(f"     True right number: {old_right_num} - New Right : {num_right}")
+
+        print(f"     Before padding : {before_padding}")
+        print(f"     NEW Snail : {new_snail}")
     
     
     return(new_snail)
@@ -283,6 +287,7 @@ def number_to_left(snail, verbose=False):
         
         #print(f"OLD: {snail[::-1].index(number)} - NEW: {len(snail) - snail.rfind(number) - 1}")
         #index = snail[::-1].index(number)
+        
         index = len(snail) - snail.rfind(number) - 1
         return((number, index))
     else:
@@ -605,18 +610,18 @@ def show_count_brackets(stringIN, level = 4 ,verbose = False):
         print(" ".join(stringIN))
         print(res)
 
-def get_exploding_pair(stringIN, level = 4 ,verbose = False):
+def get_exploding_pair(snail, level = 4 ,verbose = False):
     count = 0
     has_found=False
-    for i, x in enumerate(stringIN):
+    for i, x in enumerate(snail):
         if x=="[": 
             count += 1
             if(not has_found and count==level+1): 
                 beg = i
                 has_found = True
         elif x=="]": 
-            if(has_found and count == level): return([beg, i, stringIN[beg:i]])
             count -= 1
+            if(has_found and count == level): return([beg, i, snail[beg:i+1]])
     return(None)
 
 #-------------INPUT--------------------------
