@@ -6,7 +6,8 @@ down = up
 '''
 from os import curdir
 import re
-from typing import Union
+import numpy as np
+
 
 def main():
     content = get_input(exBOOL = True)
@@ -16,7 +17,7 @@ def main():
 
     #snailfish( [[[[1,1],[2,2]],[3,3]],[4,4]], [5,5], verbose = True)
     
-    snail = snailfish(content[0], content[1], verbose = True)
+    snail = snailfish(content[0], content[1], verbose = False)
     
     #print(content[0],"   ", content[1])
     
@@ -33,7 +34,7 @@ def main():
 
     print("              ENNNNNDDDDD   ____    TEEEEEEEEEEEESSTT\n")
     '''
-    snail = ""
+    
     print(f"First Snail:   {snail}")
     #print("Supposed to be","[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]")
     #print("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")
@@ -92,7 +93,7 @@ def snailfish(nums_a, nums_b, verbose = False):
     #2-3 do that to the max => NOT OPTI
     #print()
     print(f"Snail Before expl: {snail}")
-    snail = "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]"
+    #snail = "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]"
     evolving = True
     old_snail = str(snail)
     while(evolving == True):
@@ -188,7 +189,7 @@ def explode_MAX(snail, verbose = False):
     count_expl = 0
     red_snail = ""
     while(True):
-        red_snail = explode(snail, verbose = True)
+        red_snail = explode(snail, verbose = False)
         if(red_snail == snail):
             break
         else:
@@ -200,22 +201,32 @@ def explode_MAX(snail, verbose = False):
     return(red_snail)
 
 def explode(snail, verbose = False):
-    
-    exploding_pair = get_exploding_pair(snail, level = 4)
-    if(exploding_pair):
+    #verbose = True
+    a = get_exploding_pair(snail, level = 4)
+    b = get_exploding_pair(snail, level = 5)
+    c = get_exploding_pair(snail, level = 6)
+    get_expl_every_levels = [get_exploding_pair(snail, level = k) for k in range(4,9,1)]
+    potential_expl = [x for x in get_expl_every_levels if x]
+    if(len(potential_expl)>0):
+        first_pair_idx = np.argmin([x[0] for x in potential_expl])
+        #print(np.argmin(first_pair_idx))
+        exploding_pair = potential_expl[first_pair_idx]
+        #print(exploding_pair)
         ind_start, ind_end, to_explode = exploding_pair
         if(verbose):
             print(f"     FOUND: -> {exploding_pair}")
             print(f"     To explode: {to_explode}")
+            print(f"snail : {snail}")
     else:
         return(snail)
+    
 
     will_explode = eval(to_explode)
     
     #ind_end+=1
     num_left, i_left = number_to_left(snail[:ind_start], verbose = False)
     print(f"SNAILLL: {snail}")
-    print(f"LEFTTTT : {num_left}, {i_left}")
+    #print(f"LEFTTTT : {num_left}, {i_left}")
     if(i_left > 0): 
         num_left = str(int(num_left)+will_explode[0])
         old_left_num = int(num_left) - will_explode[0]
@@ -230,11 +241,15 @@ def explode(snail, verbose = False):
         
 
     if(len(str(old_left_num))>0):
-        bef = snail[:ind_start-i_left-len(str(old_left_num))]
-        aft = snail[ind_start-i_left:ind_start]
+        if(len(str(old_left_num)) == 1):
+            bef = snail[:ind_start-i_left-len(str(old_left_num))]
+            aft = snail[ind_start-i_left  : ind_start]
+        else:
+            bef = snail[:ind_start-i_left-len(str(old_left_num))+1]
+            aft = snail[ind_start-i_left + 1  : ind_start]
         left_part = bef + num_left + aft
         if(verbose):
-            print(f"     L bef {bef}")
+            print(f"       L bef {bef}")
             print(f"     L num_left {num_left}")
             print(f"     L aft {aft}")
             print(f"     There is a left num:  {num_left} -> {left_part} ")
@@ -242,11 +257,11 @@ def explode(snail, verbose = False):
         left_part = snail[:ind_start]+"0"
         if(verbose):    print(f"     There NO left num:  -> {left_part} ")
     if(len(str(old_right_num))>0):
-        bef = snail[ind_end + 1 + 1: ind_end + i_right - len(str(old_right_num))]
+        bef = snail[ind_end + 1 : ind_end + i_right - len(str(old_right_num))]
         aft = snail[ind_end+i_right :]
         right_part = bef + num_right + aft
         if(verbose):
-            print(f"     R bef {bef}")
+            print(f"       R bef {bef}")
             print(f"     R num_left {num_right}")
             print(f"     R aft {aft}")
             print(f"     There is a right num:  {num_right} -> {right_part} ")
@@ -258,15 +273,17 @@ def explode(snail, verbose = False):
     #print(f"    left_part :  {left_part}" )
     before_padding = left_part + "," + right_part
     #print(f"     NEW Snail : {new_snail}")
+    while(",," in before_padding):
+        before_padding = before_padding.replace(",,",",")     
     before_padding = before_padding.replace("[,","[0,") 
     new_snail = before_padding.replace(",]",",0]") 
     #print(f"     NEW Snail : {new_snail}")
     if(verbose):
-        print(f"     Snail: {snail}")
-        print(f"     True left number: {old_left_num} - New left : {num_left}")
-        print(f"     True right number: {old_right_num} - New Right : {num_right}")
+        #print(f"     Snail: {snail}")
+        #print(f"     True left number: {old_left_num} - New left : {num_left}")
+        #print(f"     True right number: {old_right_num} - New Right : {num_right}")
 
-        print(f"     Before padding : {before_padding}")
+        print(f"     Bef pad   : {before_padding}")
         print(f"     NEW Snail : {new_snail}")
     
     
@@ -400,6 +417,12 @@ def find_higher_pairs(snail, pairs_indexes, pairs_contained, depth, verbose = Fa
 
 def is_pair(p_pair):
     if(p_pair.count("[") == p_pair.count("]") and p_pair.count("[") > 0):
+        return(True)
+    else:
+       return(False)
+
+def is_1_pair(p_pair):
+    if(p_pair.count("[") == p_pair.count("]") and p_pair.count("[") == 1 and p_pair.count(",") == 1):
         return(True)
     else:
        return(False)
@@ -621,7 +644,14 @@ def get_exploding_pair(snail, level = 4 ,verbose = False):
                 has_found = True
         elif x=="]": 
             count -= 1
-            if(has_found and count == level): return([beg, i, snail[beg:i+1]])
+            #if(is_1_pair(snail[beg:i+1])):
+           #    if(has_found and count == level): return([beg, i, snail[beg:i+1]])
+            if(has_found and count == level):
+                if(is_1_pair(snail[beg:i+1])):
+                    return([beg, i, snail[beg:i+1]])
+                else:
+                    has_found = False
+            #else: has_found = False
     return(None)
 
 #-------------INPUT--------------------------
