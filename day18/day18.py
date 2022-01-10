@@ -10,7 +10,7 @@ import numpy as np
 
 
 def main():
-    content = get_input(exBOOL = True)
+    content = get_input(exBOOL = False)
 
     print(f"Content: {content}")
     print()
@@ -48,7 +48,7 @@ def main():
         #print(new_snail)
         print(f"\n\nFINAL SNAIL is:     {new_snail}")
         print(f"\n\TRUE   SNAIL is:   [[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
-                                      
+        print(f"\n\TRUE   SNAIL is:   [[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]")
         print(f"The Final sum is {sum_pair(new_snail)}")
 #    for i,x in enumerate(content[:-1]):
 #        print(x, content[i+1])
@@ -105,7 +105,11 @@ def snailfish(nums_a, nums_b, verbose = False):
         #snail = is_10_or_greater(snail)
         #snail = split_MAX(snail)
         #This works until a certain extent
-        snail = explode(snail, verbose = False)
+
+        snail = explode_MAX(snail)
+        snail = is_10_or_greater(snail)
+        snail = explode_MAX(snail)
+        """snail = explode(snail, verbose = False)
         snail = explode(snail, verbose = False)
         snail = explode(snail, verbose = False)
         snail = explode(snail, verbose = False)
@@ -114,7 +118,7 @@ def snailfish(nums_a, nums_b, verbose = False):
         snail = explode(snail, verbose = False)
         snail = explode(snail, verbose = False)
         snail = explode(snail, verbose = False)
-
+        """
 
         #snail = explode_MAX(snail, verbose=False)
         #if(verbose): print(f"            Explosions \n{snail}")
