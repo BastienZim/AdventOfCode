@@ -53,7 +53,7 @@ def iterate_all_pairs(content):
                 p_sum = sum_pair(new_snail)
                 if(p_sum > max_sum):
                     max_sum = p_sum
-    return(max_sum)
+    return(max_sum) 
 
 def test_explosion(snail):
     snail = explode(snail, verbose=True)
