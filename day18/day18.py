@@ -12,12 +12,12 @@ import numpy as np
 def main():
     content = get_input(exBOOL = False)
 
-    print(f"Content: {content}")
-    print()
+    #print(f"Content: {content}")
+    #print()
 
     #snailfish( [[[[1,1],[2,2]],[3,3]],[4,4]], [5,5], verbose = True)
 
-    snail = snailfish(content[0], content[1], verbose = False)
+    """snail = snailfish(content[0], content[1], verbose = False)
 
     #print(content[0],"   ", content[1])
 
@@ -33,13 +33,28 @@ def main():
             snail = new_snail
         #print(new_snail)
         print(f"\n\nFINAL SNAIL is:     {new_snail}")
-        print(f"\n\TRUE   SNAIL is:   [[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
-        print(f"\n\TRUE   SNAIL is:   [[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]")
+        #print(f"\n\TRUE   SNAIL is:   [[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
+        #print(f"\n\TRUE   SNAIL is:   [[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]")
         print(f"The Final sum is {sum_pair(new_snail)}")
+    """
 
+    print("PART 2")
+    max_sum = iterate_all_pairs(content)
+    print(max_sum)
 
 
 #---------------------Funcs--------------------
+def iterate_all_pairs(content):
+    max_sum = 0
+    for p_1 in content:
+        for p_2 in content:
+            if(p_1 != p_2):
+                new_snail = snailfish(p_1, p_2)
+                p_sum = sum_pair(new_snail)
+                if(p_sum > max_sum):
+                    max_sum = p_sum
+    return(max_sum)
+
 def test_explosion(snail):
     snail = explode(snail, verbose=True)
     #snail = explode_MAX(snail, verbose=True)
@@ -64,7 +79,7 @@ def snailfish(nums_a, nums_b, verbose = False):
         #print(f"Added nums : {added_nums}")
         print(f"Snail : {snail}")
 
-    print(f"Snail Before expl: {snail}")
+        #print(f"Snail Before expl: {snail}")
 
     evolving = True
     old_snail = str(snail)
@@ -79,7 +94,6 @@ def snailfish(nums_a, nums_b, verbose = False):
             evolving = False
         else:
             old_snail = str(snail)
-
 
     if(verbose): print(f"Final Reduced Snail : {snail}")
 
@@ -150,7 +164,7 @@ def explode(snail, verbose = False):
 
     #ind_end+=1
     num_left, i_left = number_to_left(snail[:ind_start], verbose = False)
-    print(f"SNAILLL: {snail}")
+    if(verbose): print(f"SNAILLL: {snail}")
     #print(f"LEFTTTT : {num_left}, {i_left}")
     if(i_left > 0):
         num_left = str(int(num_left)+will_explode[0])
@@ -318,7 +332,6 @@ def is_10_or_greater(snail, verbose=False):
         print(f"Snail    : {snail}")
         print(f"NEW Snail: {new_snail}")
     return(new_snail)
-
 
 def show_count_brackets(stringIN, level = 4 ,verbose = False):
     count, res = 0, ""
