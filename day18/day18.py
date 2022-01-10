@@ -42,11 +42,14 @@ def main():
         for x in content[2:]:
             #print(x)
             new_snail = snailfish(snail, x)
-            print(f"\n Partial Snail: {new_snail}")
+            #print(f"\n Partial Snail: {new_snail}")
             #print(snail,"    ",x)
             snail = new_snail
         #print(new_snail)
         print(f"\n\nFINAL SNAIL is:     {new_snail}")
+        print(f"\n\TRUE   SNAIL is:   [[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
+                                      
+        print(f"The Final sum is {sum_pair(new_snail)}")
 #    for i,x in enumerate(content[:-1]):
 #        print(x, content[i+1])
     #print()
@@ -101,10 +104,17 @@ def snailfish(nums_a, nums_b, verbose = False):
         #if(verbose): print("   Begin reducing")
         #snail = is_10_or_greater(snail)
         #snail = split_MAX(snail)
-
+        #This works until a certain extent
+        snail = explode(snail, verbose = False)
+        snail = explode(snail, verbose = False)
+        snail = explode(snail, verbose = False)
         snail = explode(snail, verbose = False)
         snail = is_10_or_greater(snail)
         snail = explode(snail, verbose = False)
+        snail = explode(snail, verbose = False)
+        snail = explode(snail, verbose = False)
+        snail = explode(snail, verbose = False)
+
 
         #snail = explode_MAX(snail, verbose=False)
         #if(verbose): print(f"            Explosions \n{snail}")
