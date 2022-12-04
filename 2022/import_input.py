@@ -21,7 +21,7 @@ print(f"Loading data from ADVENT OF CODE year: {year}, day: {day}")
 
 """
 /bin/python3 /home/bastienzim/Documents/perso/adventOfCode/2022/day1/import_input.py 2022 4
-
+/home/bastien/Documents/AdventOfCode/2022
 """
 
 url = "https://adventofcode.com/" + year + "/day/" + day + "/input"
@@ -31,9 +31,11 @@ SESSIONID = "53616c7465645f5f51507adf997beeaac6b92e8984a6d0b52e3b25d7fbc1213abfc
 response = requests.get(url, cookies={'session': SESSIONID})
 
 #print(response.content)
-if(not os.path.exists("/home/bastienzim/Documents/perso/adventOfCode/" + year + "/day" + day)):
-    os.mkdir("/home/bastienzim/Documents/perso/adventOfCode/" + year + "/day" + day )
-with open ("/home/bastienzim/Documents/perso/adventOfCode/" + year + "/day" + day + "/input.txt", "wb" ) as f:
+base_path = "/home/bastien/Documents/AdventOfCode/"
+#if(not os.path.exists("/home/bastienzim/Documents/perso/adventOfCode/" + year + "/day" + day)):
+if(not os.path.exists(base_path + year + "/day" + day)):
+    os.mkdir(base_path + year + "/day" + day )
+with open (base_path + year + "/day" + day + "/input.txt", "wb" ) as f:
     f.write(response.content)
 
 
