@@ -31,7 +31,9 @@ SESSIONID = "53616c7465645f5f51507adf997beeaac6b92e8984a6d0b52e3b25d7fbc1213abfc
 response = requests.get(url, cookies={'session': SESSIONID})
 
 #print(response.content)
-base_path = "/home/bastien/Documents/AdventOfCode/"
+#base_path = "/home/bastien/Documents/AdventOfCode/"
+base_path = "/home/bastienzim/Documents/perso/adventOfCode/"
+
 #if(not os.path.exists("/home/bastienzim/Documents/perso/adventOfCode/" + year + "/day" + day)):
 if(not os.path.exists(base_path + year + "/day" + day)):
     os.mkdir(base_path + year + "/day" + day )
