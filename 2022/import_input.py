@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup as bs
 
 import sys
 import os
+import shutil
 
 print(len(sys.argv))
 if(len(sys.argv)>1):
@@ -34,11 +35,24 @@ response = requests.get(url, cookies={'session': SESSIONID})
 #base_path = "/home/bastien/Documents/AdventOfCode/"
 base_path = "/home/bastienzim/Documents/perso/adventOfCode/"
 
+
+today_base = base_path + year + "/day" + day
 #if(not os.path.exists("/home/bastienzim/Documents/perso/adventOfCode/" + year + "/day" + day)):
-if(not os.path.exists(base_path + year + "/day" + day)):
-    os.mkdir(base_path + year + "/day" + day )
-with open (base_path + year + "/day" + day + "/input.txt", "wb" ) as f:
+if(not os.path.exists(today_base)):
+    os.mkdir(today_base)
+with open (today_base + "/input.txt", "wb" ) as f:
     f.write(response.content)
+
+if(int(day)>2):
+    previous_day = str(int(day)-1)
+    last_day_base = base_path + year + "/day" + previous_day
+    print(last_day_base+"/day"+previous_day+".py")
+    print(today_base + "/day"+day+".py")
+    print(last_day_base+"/example_in.txt")
+    print(today_base + "/example_in.txt")
+    shutil.copyfile(last_day_base+"/day"+previous_day+".py", today_base + "/day"+day+".py")
+    shutil.copyfile(last_day_base+"/example_in.txt", today_base + "/example_in.txt")
+
 
 
 
