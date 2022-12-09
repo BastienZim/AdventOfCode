@@ -46,12 +46,15 @@ with open (today_base + "/input.txt", "wb" ) as f:
 if(int(day)>2):
     previous_day = str(int(day)-1)
     last_day_base = base_path + year + "/day" + previous_day
-    print(last_day_base+"/day"+previous_day+".py")
-    print(today_base + "/day"+day+".py")
-    print(last_day_base+"/example_in.txt")
-    print(today_base + "/example_in.txt")
-    shutil.copyfile(last_day_base+"/day"+previous_day+".py", today_base + "/day"+day+".py")
-    shutil.copyfile(last_day_base+"/example_in.txt", today_base + "/example_in.txt")
+    #print(last_day_base+"/day"+previous_day+".py")
+    print("created: ",today_base + "/day"+day+".py")
+    #print(last_day_base+"/example_in.txt")
+    print("created: ",today_base + "/example_in.txt")
+    shutil.copyfile(base_path + year +"/template_day.py", today_base + "/day"+day+".py")
+    
+    with open (today_base + "/example_in.txt", "wb" ) as f:
+        pass
+    #shutil.copyfile(last_day_base+"/example_in.txt", today_base + "/example_in.txt")
 
 
 
