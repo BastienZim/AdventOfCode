@@ -24,25 +24,64 @@ def main():
             input = f.readlines()
     input = sanitize_input(input)
 
-    H, T = [0, 0], [0, 0]
+    nodes = [np.array([0,0]) for _ in range(10)]
     dict_dir = {"L": [-1, 0], "R": [1, 0], "U": [0, -1], "D": [0, 1]}
     #print(input)
-    tail_visited = [list(T)]
-    
+    tail_visited = [list(nodes[-1])]
+       
     for dir, n_times in input:
-        #print("------------------")
-        #print(dir, n_times)
+        #print("->",dir, n_times)
         for _ in range(int(n_times)):
-            #print(H, T)
-            H = np.add(H, dict_dir[dir])
-            T = follow(H, T)
-            if(list(T) not in tail_visited):
-                tail_visited.append(list(T))
+            nodes[0] = np.add(nodes[0], dict_dir[dir])
+            previous_node = nodes[0]
+            for i, n in enumerate(nodes[1:]):
+                n = follow(previous_node, n)
+                nodes[i+1] = n 
+                previous_node = n
+            if(list(nodes[-1]) not in tail_visited):
+                tail_visited.append(list(nodes[-1]))
+        #print([list(x) for x in nodes])
+        #print("#"*20)
+        #print_grid(nodes)
     print(len(tail_visited))
             # print(T)
         #print(H, T)
-        
+    
+    #print(follow(np.array([4,-2]),np.array([3,0])))
+
+
+    #[4,-2],[3,0]
         # print()
+#    print_grid([np.array([5, 0]), np.array([4, 0]), np.array([3, 0]), np.array([2, 0])])
+
+'''
+
+.....
+.0...
+.....
+...AB
+
+'''
+def print_grid(nodes, min_size = 0):
+    list_nodes = [list(x) for x in nodes]
+    #print(list_nodes)
+    pad = 2
+    min_x, max_x = min([x[1] for x in nodes])-pad, max([x[1] for x in nodes])+1+pad
+    min_y, max_y = min([x[0] for x in nodes])-1-pad, max([x[0] for x in nodes])+pad
+    
+    #print(min_y, max_y, min_x, max_x)
+    #min_y, max_y, min_x, max_x = -1, 6, -6, 1
+    for j in range(min(min_x,0), max(max_x, min_size)):
+        plot_string = ""
+        for i in range(max(max_y, min_size), min(min_y,0), -1):
+            if(i==j and i==0):
+                plot_string = "s" + plot_string
+            elif(list([i,j]) in list_nodes):
+                #print("ASD")
+                plot_string = str(list_nodes.index(list([i,j]))) + plot_string
+            else:                
+                plot_string = "."+plot_string
+        print(plot_string)
 
 
 def follow(H, T):
@@ -59,16 +98,22 @@ def follow(H, T):
         for x in plusdir:
             if(np.linalg.norm(H-(T+np.array(x)), ord=2) == 1):
                 return(T+np.array(x))
+    #elif(distL2_HT > 2*np.sqrt(2)):
+    #    #move in dir of L2
+    #    print("ASLKJDALJSDSAKJDS")
+    #    print(H-T)
     elif(distL2_HT > np.sqrt(2)+0.1):
-        # print("Diag")
+        #print("Diag")
         neighbourhood = [np.array([-1+i, -1+j])
                          for i in range(3) for j in range(3)]
-        for x in neighbourhood:
-            candidate = np.add(T, x)
-            dist_head = np.linalg.norm(candidate-H, ord=2)
-            if(dist_head <= 1):
-                return(candidate)
-        pritn("FAILURED")
+        candidates = [np.add(T, x) for x in neighbourhood]
+        candidates = list(map(lambda x: (np.linalg.norm(x-H, ord=2), x), candidates))
+        
+        if(min([x[0] for x in candidates]) <= np.sqrt(2)):
+            return(np.array([x[1] for x in candidates if x[0] == min([x[0] for x in candidates])][0]))
+#            return(min(candidates)[1])
+        else:
+            print("FAILURE")
     else:
         # print("diag close enough")#, distL2_HT)
         return(T)
