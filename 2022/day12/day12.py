@@ -23,13 +23,27 @@ def main():
         with open(path+"/day"+day+"/input.txt") as f:
             input = f.readlines()
     input = sanitize_input(input)
-    print(input)
+    #print(input)
+    #input = np.array(input)
+    S = np.where(input =='S')
+    E = np.where(input =='E')
+    for x in input:
+        print("".join(x))
     
 
+def is_higher(letter_1, letter_2):
+
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    return(alphabet.index(letter_1) <= alphabet.index(letter_2))
+
+def can_clim(letter_1, letter_2):
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    return(alphabet.index(letter_1) == alphabet.index(letter_2) or
+           alphabet.index(letter_1) == alphabet.index(letter_2)+1)
 
 def sanitize_input(input):
     #alternative: [int(x.replace("\n","")) for x in input]
-    return list(map(lambda x: x.replace("\n",""), input))
+    return np.array(list(map(lambda x: list(x.replace("\n","")), input)))
 
 
 
