@@ -7,8 +7,8 @@ import os
 import numpy as np
 
 
-path = "/home/bastienzim/Documents/perso/adventOfCode/2022"
-#path = "/home/bastien/Documents/AdventOfCode/2022"
+#path = "/home/bastienzim/Documents/perso/adventOfCode/2022"
+path = "/home/bastien/Documents/AdventOfCode/2022"
 
 
 example = True
@@ -23,8 +23,23 @@ def main():
         with open(path+"/day"+day+"/input.txt") as f:
             input = f.readlines()
     input = sanitize_input(input)
-    print(input)
+    #print(input)
     
+    monkeys = []
+    for x in input:
+        if("Monkey" in x):
+            monk = {}
+            print("New Monkey",x)
+        elif("Starting" in x):
+            start_items = [int(x) for x in x.split(": ")[-1].split(', ')]
+            print(start_items)
+            #print(x)
+        elif("Operation" in x):
+            ope = x.split(": ")[-1]
+            print(ope)
+
+        else:
+            print(x)    
 
 
 def sanitize_input(input):
