@@ -8,6 +8,12 @@ import numpy as np
 import timeit
 from sympy import Interval, Union
 
+import geopandas as gpd
+
+from shapely.geometry import Polygon
+from shapely.ops import cascaded_union, unary_union
+import matplotlib.pyplot as plt
+
 from functools import reduce
 
 path = "/home/bastienzim/Documents/perso/adventOfCode/2022"
@@ -67,8 +73,58 @@ def main():
     #x,y = up_down_scan(sensors, beacons)
     #print(x,y, tuning_freq(x,y))
 #    print(tuning_freq(14,11))
-    row_col_scan(sensors, beacons)
+    x,y = circles_method(sensors, beacons)
+    print(x,y, tuning_freq(x,y))
+    
+'''
+.....
+..0.
+. 100.
+  2oooo
+.  000.
+..  0..
+.....
+0000
+1111
+2222
+3333
 
+0
+10
+210
+3210
+ 321
+  32
+   3
+'''
+
+
+#1 circle = 2 intervals autour du centre
+#ici c'est en diag
+
+def circles_method(sensors, beacons):
+    '''Not ok for immense search spaces'''
+#    map = np.zeros((search_space, search_space), bool)
+    #closest_b_dist = [m_dist(s, b) for s, b in zip(sensors, beacons)]
+    polygons =[]
+    for s, b in zip(sensors, beacons):
+        d = m_dist(s, b)
+        corners = [(s[0]+d, s[1]), (s[0], s[1]+d), (s[0]-d, s[1]), (s[0], s[1]-d)]
+        #print(corners)
+        
+        polygons.append(Polygon(corners))
+
+    all_no_beacons = gpd.GeoSeries( unary_union(polygons))
+    grid = gpd.GeoSeries(Polygon([(0,0), (0,search_space), (search_space,search_space), (search_space,0)]))
+
+    inter = grid.intersection(all_no_beacons)
+
+    diff = grid.difference(inter)
+    xx, yy = diff.geometry[0].exterior.coords.xy
+    
+    return((int(min(xx) + 1), int(min(yy) + 1)))
+#    print(diff.geometry)
+    #plt.show()
 
 def row_col_scan(sensors, beacons):
     closest_b_dist = [m_dist(s, b) for s, b in zip(sensors, beacons)]
