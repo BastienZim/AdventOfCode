@@ -75,32 +75,6 @@ def main():
 #    print(tuning_freq(14,11))
     x,y = circles_method(sensors, beacons)
     print(x,y, tuning_freq(x,y))
-    
-'''
-.....
-..0.
-. 100.
-  2oooo
-.  000.
-..  0..
-.....
-0000
-1111
-2222
-3333
-
-0
-10
-210
-3210
- 321
-  32
-   3
-'''
-
-
-#1 circle = 2 intervals autour du centre
-#ici c'est en diag
 
 def circles_method(sensors, beacons):
     '''Not ok for immense search spaces'''

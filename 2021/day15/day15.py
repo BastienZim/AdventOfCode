@@ -20,10 +20,10 @@ def main():
 
     #part1
 #    search(start, end, map)
-    #distances, parrents = Dijkstra(start, end, map)
-    #print(parrents)
+    #distances, parents = Dijkstra(start, end, map)
+    #print(parents)
     #print(distances[(9,9)])
-    #path = get_path(parrents,start, end)
+    #path = get_path(parents,start, end)
     #print(path, distances[end])
     
     #part2
@@ -31,10 +31,10 @@ def main():
     start = (0,0)
     end = (map.shape[0]-1, map.shape[1]-1)
     t1 = time()
-    distances, parrents = Dijkstra_queue(start, map)
-#    #distances, parrents = Dijkstra(start, end, map)
+    distances, parents = Dijkstra_queue(start, map)
+#    #distances, parents = Dijkstra(start, end, map)
     print("Dijkstra QQQQ time : %.4f s "%(time()-t1))
-    path = get_path(parrents, start, end)
+    path = get_path(parents, start, end)
     #print(path, distances[end])
     print(distances[end])
 
@@ -90,11 +90,11 @@ def get_neighbours(point,  grid, map_shape):
     return(list(filter(lambda x: isinGrid(x, map_shape),
         [tuple(map(sum,zip(point,transi))) for transi in [(-1,0),(0,-1),(1,0),(0,1)]])))
 
-def get_path(parrents,start, end):
+def get_path(parents,start, end):
     node = end
     path = [end]
     while(node!=start):
-        new = parrents[node]
+        new = parents[node]
         path.append(new)
         node = new
     path.reverse()
@@ -104,7 +104,7 @@ def Dijkstra(start, end, map):
     map_shape = map.shape
     nodes = [(i,j) for i in range(0,map_shape[0]) for j in range(0,map_shape[1])]
     unvisited = {node: None for node in nodes}
-    parrents = {}
+    parents = {}
     distances = {}
     node = start
     current_distance = 0
@@ -116,7 +116,7 @@ def Dijkstra(start, end, map):
             new_Distance = dist + current_distance
             if(unvisited[n] is None or new_Distance < unvisited[n]):
                 unvisited[n] = new_Distance
-                parrents[n] = node
+                parents[n] = node
             
         distances[node] = current_distance
         del unvisited[node]
@@ -125,7 +125,7 @@ def Dijkstra(start, end, map):
         node, current_distance = sorted(candidates, key= lambda x: x[1])[0]
     
     
-    return(distances, parrents)
+    return(distances, parents)
 
 
 def Dijkstra_queue(start, map):
@@ -133,13 +133,13 @@ def Dijkstra_queue(start, map):
     map_shape = map.shape
     nodes = [(i,j) for i in range(0,map_shape[0]) for j in range(0,map_shape[1])]
     distances = {}
-    parrents = {}
+    parents = {}
     queue = []
     distances[start] = 0
     for n in nodes: 
         if n != start :
             distances[n] = np.inf
-            parrents[n] = None
+            parents[n] = None
         heapq.heappush(queue, (n, distances[n]))
     
     while (len(queue)>0):
@@ -150,13 +150,13 @@ def Dijkstra_queue(start, map):
             current_distance = distances[current_node] + dist
             if current_distance < distances[n]:
                 distances[n] = current_distance
-                parrents[n] = current_node
+                parents[n] = current_node
                 #problem no update priority in heapq.... only O(n)
                 #queue.decrease_priority((n, current_distance))
                 heapq.heappush(queue,(n, current_distance))
                     
     
-    return(distances, parrents)
+    return(distances, parents)
 
 
 #-------------INPUT--------------------------
