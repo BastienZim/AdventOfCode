@@ -6,8 +6,6 @@
 import os
 import numpy as np
 import itertools
-import timeit
-from jax import jit
 
 path = "/home/bastienzim/Documents/perso/adventOfCode/2022"
 #path = "/home/bastien/Documents/AdventOfCode/2022"
@@ -56,12 +54,17 @@ def main():
         good_distances[v1][v1] = 0
         for v2 in good_valves[i+1:]:
             distances, _ = Dijkstra(v1, v2, map)
-            # if(distances[v2]>10):
+            #if(distances[v2]>10):
             #    print("OMEGA BIG",distances[v2],v1, v2)
             good_distances[v1][v2] = distances[v2]
             good_distances[v2][v1] = distances[v2]
 
     closed_valves = good_valves.copy()
+
+    
+
+
+
 
     # print(greedy(current_valve, closed_valves,
     #      init_total_flow, time, flow, good_distances))
@@ -71,79 +74,15 @@ def main():
 
     #print(f"            FINAL RESULT ==> {total_flow} ==> best {best_order}")
 
-    # Try everything...
-    valves_considered = [first_valve] + closed_valves
-    i_good_distances_dict = {i: {} for i in range(len(valves_considered))}
-    i_good_distances_dict = {}
+    #Try everything...
+
+
+#    current_best, best_perm = try_all_permuts(first_valve, closed_valves, init_total_flow, init_time, flow, good_distances)
+#    print(current_best, best_perm)
     
-    for k, v in good_distances.items():
-        i = valves_considered.index(k)
-        i_good_distances_dict[i] = {valves_considered.index(x):d for x,d in v.items()}
-
-    i_good_distances = np.zeros(
-        (len(valves_considered), len(valves_considered)), dtype=np.int8)
-    for k, v in good_distances.items():
-        i = valves_considered.index(k)
-        for x, d in v.items():
-            j = valves_considered.index(x)
-            i_good_distances[i, j] = d
-    #        i_good_distances_dict[i][j] = d
-    # print(i_good_distances)
-    print()
-    # print(closed_valves)
-    i_first_valve = valves_considered.index(first_valve)
-    i_closed_valves = [valves_considered.index(x) for x in closed_valves]
-    i_flow = {valves_considered.index(k):v  for k, v in flow.items()}
-    # print(i_closed_valves)
-
-    # time = timeit.timeit(lambda: try_all_permuts_new(i_first_valve, i_closed_valves,
-    #                    init_total_flow, init_time, i_flow, i_good_distances), number=100)
-    #print(f"Time new: {time}")
-    # time = timeit.timeit(lambda: try_all_permuts(first_valve, closed_valves,
-    #                     init_total_flow, init_time, flow, good_distances), number=100)
-    #print(f"Time old: {time}")
-
-    # print()
-    # time = timeit.timeit(lambda: run_order_new((1, 4, 5, 2, 6, 3), i_first_valve, i_closed_valves,
-    #                               init_total_flow, init_time, i_flow, i_good_distances), number=100)
-    #print(f"Time new: {time}")#
-    # time = timeit.timeit(lambda: run_order(('HH', 'JJ', 'EE', 'BB', 'CC', 'DD'), first_valve, closed_valves,
-    #                           init_total_flow, init_time, flow, good_distances), number=100)
-    #print(f"Time old: {time}")
-#
-#    print(good_distances)
-    print(i_closed_valves)
-    print(closed_valves)
-    aaaa_closed_valves = np.zeros(len(valves_considered),dtype=bool)
-    aaaa_closed_valves[0]=1
-    print(aaaa_closed_valves)
-    #print(i_good_distances_dict)
-    #print(good_distances)
-#    print([len(v) for v in i_good_distances_dict.values()])
-#    print([len(v) for v in good_distances.values()])
-    n_iter = int(1e6)
-    time = timeit.timeit(lambda: update_new(6, aaaa_closed_valves,
-                                            init_total_flow, init_time, i_flow, i_good_distances_dict[6][i_first_valve]), number=n_iter)
-    print(f"Time new: {time}")
-    time = timeit.timeit(lambda: update("EE", first_valve, closed_valves,
-                                        init_total_flow, init_time, flow, good_distances), number=n_iter)
-    print(f"Time old: {time}")
-
-    # current_best, best_perm = try_all_permuts_new(i_first_valve, i_closed_valves,
-    #                    init_total_flow, init_time, i_flow, i_good_distances)
-    #print(current_best, best_perm)
-    # current_best, best_perm = try_all_permuts(
-    #     first_valve, closed_valves, init_total_flow, init_time, flow, good_distances)
-    #print(current_best, best_perm)
-
-    # np.zeros()
-    # current_best, best_perm = try_all_permuts(
-    #     first_valve, closed_valves, init_total_flow, init_time, flow, good_distances)
-    #print(current_best, best_perm)
-
     '''    order, total_flow = all_try(first_valve, good_valves,
                             init_total_flow, init_time, flow, good_distances)
-
+        
         print(f"First RESULT ==> {total_flow} ==> order {order}")
         current_best = total_flow
         for i in range(len(order)):
@@ -160,8 +99,8 @@ def main():
                 print(f"            FINAL RESULT ==> {total_flow} ==> order {swap_order}")
     '''
 
-    # print(good_distances)
-    #Dijkstra_adapt("AA", good_distances)
+    print(good_distances)
+    Dijkstra_adapt("AA", good_distances)
 
 
 def try_all_permuts(first_valve, closed_valves, init_total_flow, init_time, flow, good_distances):
@@ -169,61 +108,32 @@ def try_all_permuts(first_valve, closed_valves, init_total_flow, init_time, flow
 
     current_best = 0
     for perm in (itertools.permutations(closed_valves)):
-        total_flow = run_order(perm, first_valve, closed_valves,
-                               init_total_flow, init_time, flow, good_distances)
-        if(total_flow > current_best):
-            current_best = total_flow
-            best_perm = perm
-            #print(total_flow, perm)
-    #print(f"            FINAL RESULT ==> {current_best} ==> order {best_perm}")
+        total_flow = run_order(perm, first_valve, closed_valves, init_total_flow, init_time, flow, good_distances)
+        if(total_flow>current_best):
+                current_best = total_flow
+                best_perm = perm
+                print(total_flow,perm)
+    print(f"            FINAL RESULT ==> {current_best} ==> order {best_perm}")
     return(current_best, best_perm)
-
-
-def try_all_permuts_new(i_first_valve, i_closed_valves, init_total_flow, init_time, i_flow, i_good_distances):
-    """Too costly."""
-
-    current_best = 0
-    for perm in (itertools.permutations(i_closed_valves)):
-        total_flow = run_order_new(perm, i_first_valve, i_closed_valves,
-                                   init_total_flow, init_time, i_flow, i_good_distances)
-        if(total_flow > current_best):
-            current_best = total_flow
-            best_perm = perm
-            #print(total_flow, perm)
-    #print(f"            FINAL RESULT ==> {current_best} ==> order {best_perm}")
-    return(current_best, best_perm)
-    # return(current_best)
-
 
 def run_order(order, current_valve, closed_valves, total_flow, time, flow, good_distances):
     i_chosen = 0
     while(time >= 0):
+        #print(f" Time: {30-time},current_v {current_valve}, releasing {sum([flow[v] for v in flow.keys() if v not in closed_valves])} pressure")
+        #print(f" total flow = {total_flow}")
         if(len(closed_valves) > 0):
+            #print(len(order), i_chosen)
             chosen = order[i_chosen]
             i_chosen += 1
-            if(i_chosen > len(order)):
+            if(i_chosen>len(order)):
                 time = -1
                 break
+            #print(f"Chosen: {chosen}")
             current_valve, time, total_flow, closed_valves = update(
                 chosen, current_valve, closed_valves, total_flow, time, flow, good_distances)
         else:
             time = -1
-    return total_flow
-
-
-def run_order_new(order, i_current_valve, i_closed_valves, total_flow, time, i_flow, i_good_distances):
-    i_chosen = 0
-    while(time >= 0):
-        if(len(i_closed_valves) > 0):
-            chosen = order[i_chosen]
-            i_chosen += 1
-            if(i_chosen > len(order)):
-                time = -1
-                break
-            i_current_valve, time, total_flow, i_closed_valves = update_new(
-                chosen, i_current_valve, i_closed_valves, total_flow, time, i_flow, i_good_distances)
-        else:
-            time = -1
+    #print("\n            FINAL RESULT ==>  ", total_flow, "J")
     return total_flow
 
 
@@ -233,8 +143,8 @@ def all_try(current_valve, closed_valves, total_flow, time, flow, good_distances
         if(len(closed_valves) > 0):
             candidates = get_candidates_f_d_gain(
                 current_valve, closed_valves, time, flow, good_distances)
-            if(len(candidates) == 0):
-                time = -1
+            if(len(candidates)==0):
+                time =-1
                 break
             filter_candidate(candidates, current_valve, closed_valves,
                              total_flow, time, flow, good_distances)
@@ -251,8 +161,8 @@ def all_try(current_valve, closed_valves, total_flow, time, flow, good_distances
 
 def filter_candidate(candidates, current_valve, closed_valves, total_flow, time, flow, good_distances):
     """ each candidate : v, f, d, flow_added """
-    # print(candidates,len(candidates))
-    if(len(candidates) <= 1):
+    #print(candidates,len(candidates))
+    if(len(candidates)<=1):
         return(candidates)
     filt_cand = sorted(candidates.copy(), key=lambda x: x[2])
     # for the same distance remove the less beneficial one
@@ -281,26 +191,18 @@ def filter_candidate(candidates, current_valve, closed_valves, total_flow, time,
 
     return([best_cand])
 
-
 def update(choice, current_valve, closed_valves, total_flow, time, flow, good_distances):
+    #print(f"  UPDATE | time: {30-time}, opening: {choice}")
 
     closed_upd = closed_valves.copy()
+    # print(good_distances["AA"],good_distances["DD"])
     time_upd = time - (good_distances[choice][current_valve] + 1)
+    #print(f"  ---Activating choice: {choice}, flow: {flow[choice]}; Time:{30-time_upd} -> remaining {time_upd} min")
     total_flow_upd = total_flow + (time_upd+1) * flow[choice]
     closed_upd.remove(choice)
+
+    #print(f"  aft UPDATE | time: {30-time_upd} d+1={good_distances[choice][current_valve] + 1}, from: {total_flow_upd}")
     return(choice, time_upd, total_flow_upd, closed_upd)
-
-
-def math_op(time, value_dist, total_flow, v_flow):
-    time_upd = time - (value_dist + 1)
-    return(time_upd, total_flow + (time_upd+1) * v_flow)
-
-def update_new(choice, i_closed_valves, total_flow, time, i_flow, value_dist):
-    
-    time_upd = time - (value_dist + 1)
-    time_upd, total_flow_upd= math_op(time, value_dist, total_flow, i_flow[choice])
-    i_closed_valves[choice] = True
-    return(time_upd, total_flow_upd, i_closed_valves)
 
 
 def get_candidates_f_d_gain(current_valve, closed_valves, time, flow, good_distances):
@@ -311,7 +213,7 @@ def get_candidates_f_d_gain(current_valve, closed_valves, time, flow, good_dista
             d = good_distances[current_valve][v]
         else:
             d = 0
-        if(time-d-1 > 0):
+        if(time-d-1>0):
             candidates.append((v, f, d, (time-d-1)*f))
 
     return candidates
