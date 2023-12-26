@@ -1,60 +1,34 @@
-'''
-@author: BastienZim
+import regex as re
 
-'''
-
-import os
-import numpy as np
-
-example = False
-
-path = "/home/bastienzim/Documents/perso/adventOfCode/2022/"
-
-
+INPUT_FILE_PATH = './input.txt'
+DIGIT_WORDS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+RE = '\d|' + '|'.join(DIGIT_WORDS)
 
 def main():
-    day = str(os.path.basename(__file__).split(".")[0][3:])
-    if(example):
-        with open(path+"/day"+day+"/example_in.txt") as f:
-            input = f.readlines()
-    else:
-        with open(path+"/day"+day+"/input.txt") as f:
-            input = f.readlines()
-    #print(input)
-    input = sanitize_input(input)
-    #print(input)
-    elves = []
-    current_elf = []
-    for x in input: 
-        if(x == ""):
-            elves.append(current_elf)
-            current_elf = []
-        else:
-            current_elf.append(int(x))
-        #print(x)
+    lines = parse_input_file()
+    calibration_values = [get_calibration_value(line) for line in lines]
     
-    elves.append(current_elf)
-    #print(elves)
-    #print(np.argmax([sum(x) for x in elves]))
-    #print(max([sum(x) for x in elves]))
-    maxs=[0,0,0]
-    #print([sum(x) for x in elves])
-    for x in [sum(x) for x in elves]:
-        if(x> min(maxs)):
-            maxs[np.argmin(maxs)] = x
-    print(sum(maxs))
-    #inc = has_increased(input, verbose = False)
-    #print(inc)
-    #counter = count_inc(input)
-    #print(counter, sum(inc[1:]))
+    # Part 2
+    print(sum(calibration_values))
 
-def sanitize_input(input):
-    #alternative: [int(x.replace("\n","")) for x in input]
-    return list(map(lambda x: x.replace("\n",""), input))
+def get_calibration_value(line):
+    def get_digit_from_digit_or_word_digit(target):
+        # returns (index + 1) if target in DIGIT_WORDS, else returns target
+        return str(DIGIT_WORDS.index(target) + 1) if target in DIGIT_WORDS else target
+    
+    matches = re.findall(RE, line, overlapped=True)
+    first_digit = matches[0]
+    last_digit = matches[-1]
+    first_digit = get_digit_from_digit_or_word_digit(first_digit)
+    last_digit = get_digit_from_digit_or_word_digit(last_digit)
+    print(f"{first_digit}{last_digit}")
+    
+    return int(first_digit + last_digit)
 
-
-
+def parse_input_file():
+    with open(INPUT_FILE_PATH, 'r') as f:
+        lines = f.read().split("\n")
+    return lines
 
 if __name__ == "__main__":
     main()
-
