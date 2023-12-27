@@ -7,11 +7,12 @@ fn main() {
     let lines = read_lines(false);
     let mut v: Vec<i32> = Vec::new();
     let valid_digits: [&str; 20] = [
-        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "0", "1", "2", "3", "4",
-        "5", "6", "7", "8", "9",
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "0", "1",
+        "2", "3", "4", "5", "6", "7", "8", "9",
     ];
     let valid_digits_asint: [char; 20] = [
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9',
     ];
 
     for line in lines {
