@@ -1,6 +1,7 @@
 import regex as re
 
 INPUT_FILE_PATH = './input.txt'
+INPUT_FILE_PATH = './example_in.txt'
 
 def main():
     lines = parse_input_file()
